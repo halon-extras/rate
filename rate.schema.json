@@ -1,0 +1,13 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "description": "rate client plugin schema",
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "reresolve": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Automatically re-resolve the hostname of the rated server every x seconds (The default is to never re-resolve the hostname of the rated server automatically)"
+        }
+    }
+}

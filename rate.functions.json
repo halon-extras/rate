@@ -1,0 +1,36 @@
+[
+    {
+        "name": "rate",
+        "parameters": {
+            "required": [
+                {
+                    "name": "namespace",
+                    "type": "string"
+                },
+                {
+                    "name": "entry",
+                    "type": "string"
+                },
+                {
+                    "name": "count",
+                    "type": "number"
+                },
+                {
+                    "name": "interval",
+                    "type": "number"
+                }
+            ],
+            "optional": [
+                {
+                    "name": "options",
+                    "type": "array"
+                }
+            ]
+        },
+        "returnType": "number or none",
+        "detail": "rate(string $namespace, string $entry, number $count, number $interval [, array $options]): number or none",
+        "value": "rate($0)",
+        "documentation": "Check or account for the rate of entry in namespace during the last interval. On error none is returned.",
+        "link": "[Full documentation](https://github.com/halon-extras/rate)"
+    }
+]

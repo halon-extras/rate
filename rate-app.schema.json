@@ -1,0 +1,52 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "description": "rate client plugin schema",
+    "oneOf": [
+        {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "path": {
+                    "type": "string",
+                    "default": "/var/run/halon/rated.sock",
+                    "description": "Socket path to rate process",
+                    "markdownDescription": "Socket path to [rate](https://docs.halon.io/hsl/functions.html#core.rate) process"
+                }
+            }
+        },
+        {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "port"
+            ],
+            "properties": {
+                "port": {
+                    "type": "integer",
+                    "maximum": 65535,
+                    "minimum": 1,
+                    "description": "Port number"
+                },
+                "address": {
+                    "description": "IP address",
+                    "anyOf": [
+                        {
+                            "type": "string",
+                            "format": "ipv4",
+                            "description": "IPv4 address"
+                        },
+                        {
+                            "type": "string",
+                            "format": "ipv6",
+                            "description": "IPv6 address"
+                        },
+                        {
+                            "type": "string",
+                            "description": "The hostname"
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}
