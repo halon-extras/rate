@@ -68,6 +68,7 @@ struct rate_packet_count_reply
 	uint32_t count;
 } __attribute__((packed));
 
+extern char *__progname;
 std::mutex m;
 std::thread p;
 std::condition_variable cv;
@@ -149,12 +150,25 @@ bool create_sockets(std::string path_, std::string port_, std::string address_, 
 			struct sockaddr_un addr;
 			memset(&addr, 0, sizeof addr);
 			addr.sun_family = PF_LOCAL;
+#if defined(__FreeBSD__)
+			string sock = format("/tmp/rated-%s.sock", __progname);
+			strncpy(addr.sun_path, sock.c_str(), sizeof addr.sun_path);
+			unlink(sock.c_str());
+			if (bind(udp_internal, (struct sockaddr *)&addr, sizeof addr) == -1)
+			{
+				close(udp_internal);
+				syslog(LOG_CRIT, "rate(bind): failed");
+				continue;
+			}
+			chmod(sock.c_str(), 0666);
+#else
 			if (bind(udp_internal, (struct sockaddr *)&addr, sizeof(sa_family_t)) == -1)
 			{
 				close(udp_internal);
 				syslog(LOG_CRIT, "rate(bind): failed");
 				continue;
 			}
+#endif
 		}
 
 		if (connect(udp_internal, (struct sockaddr *)&dst, len) == -1)
@@ -219,33 +233,6 @@ bool Halon_init(HalonInitContext* hic)
 	}
 
 	return true;
-}
-
-HALON_EXPORT
-void Halon_config_reload(HalonConfig* app)
-{
-	std::string path_;
-	std::string port_;
-	std::string address_;
-
-	const char* a = HalonMTA_config_string_get(HalonMTA_config_object_get(app, "path"), nullptr);
-	if (a) path_ = a;
-	const char* b = HalonMTA_config_string_get(HalonMTA_config_object_get(app, "port"), nullptr);
-	if (b) port_ = b;
-	const char* c = HalonMTA_config_string_get(HalonMTA_config_object_get(app, "address"), nullptr);
-	if (c) address_ = c;
-
-	std::vector<int> sockets_;
-	if (create_sockets(path_, port_, address_, sockets_))
-	{
-		std::lock_guard<std::mutex> lg(m);
-		for (int socket : sockets)
-			close(socket);
-		sockets = sockets_;
-		path = path_;
-		port = port_;
-		address = address_;
-	}
 }
 
 HALON_EXPORT
