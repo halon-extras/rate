@@ -151,7 +151,7 @@ bool create_sockets(std::string path_, std::string port_, std::string address_, 
 			memset(&addr, 0, sizeof addr);
 			addr.sun_family = PF_LOCAL;
 #if defined(__FreeBSD__)
-			string sock = format("/tmp/rated-%s.sock", __progname);
+			std::string sock = "/tmp/rated-" + std::string(__progname) + ".sock";
 			strncpy(addr.sun_path, sock.c_str(), sizeof addr.sun_path);
 			unlink(sock.c_str());
 			if (bind(udp_internal, (struct sockaddr *)&addr, sizeof addr) == -1)
