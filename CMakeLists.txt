@@ -5,7 +5,6 @@ PROJECT("rate" VERSION 1.0.0)
 SET(CPACK_GENERATOR "DEB")
 
 SET(CMAKE_BUILD_TYPE Release)
-SET(CMAKE_C_FLAGS_RELEASE "-Wall -Wvla -Wshadow -Wconversion -Wno-sign-conversion -O2 -fno-strict-aliasing -Wextra -Wno-unused-parameter")
 SET(CMAKE_CXX_FLAGS_RELEASE "-std=c++17 -Wall -Wvla -Wshadow -Wconversion -Wno-sign-conversion -Wno-c++11-narrowing -O2 -fno-strict-aliasing -Wextra -Wno-unused-parameter")
 
 ADD_LIBRARY(rate SHARED
@@ -15,7 +14,6 @@ ADD_LIBRARY(rate SHARED
 SET_TARGET_PROPERTIES(rate PROPERTIES PREFIX "")
 
 INCLUDE_DIRECTORIES(
-	../smtpd
 	/opt/halon/include
 )
 
