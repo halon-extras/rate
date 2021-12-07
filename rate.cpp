@@ -103,7 +103,7 @@ bool create_sockets(std::string path_, std::string port_, std::string address_, 
 		if (error != 0)
 		{
 			if (error == EAI_SYSTEM)
-				syslog(LOG_ERR, "rate(getaddrinfo): %s", strerror(errno));
+				syslog(LOG_ERR, "rate(getaddrinfo): %m");
 			else
 				syslog(LOG_ERR, "rate(getaddrinfo): %s", gai_strerror(error));
 			return false;
@@ -140,7 +140,7 @@ bool create_sockets(std::string path_, std::string port_, std::string address_, 
 		int udp_internal = socket(dst.ss_family, SOCK_DGRAM, 0);
 		if (udp_internal == -1)
 		{
-			syslog(LOG_CRIT, "rate(socket): failed");
+			syslog(LOG_CRIT, "rate(socket): %m");
 			continue;
 		}
 
@@ -152,7 +152,7 @@ bool create_sockets(std::string path_, std::string port_, std::string address_, 
 			if (bind(udp_internal, (struct sockaddr *)&addr, sizeof(sa_family_t)) == -1)
 			{
 				close(udp_internal);
-				syslog(LOG_CRIT, "rate(bind): failed");
+				syslog(LOG_CRIT, "rate(bind): %m");
 				continue;
 			}
 		}
@@ -160,7 +160,7 @@ bool create_sockets(std::string path_, std::string port_, std::string address_, 
 		if (connect(udp_internal, (struct sockaddr *)&dst, len) == -1)
 		{
 			close(udp_internal);
-			syslog(LOG_CRIT, "rate(connect): failed");
+			syslog(LOG_CRIT, "rate(connect): %m");
 			continue;
 		}
 
@@ -380,7 +380,7 @@ void rate(HalonHSLContext* hhc, HalonHSLArguments* args, HalonHSLValue* ret)
 		ssize_t r = send(udp_internal, &hit, sizeof hit, 0);
 		if (r != sizeof hit)
 		{
-			syslog(LOG_ERR, "rate(send): failed");
+			syslog(LOG_ERR, "rate(send): %m");
 			if (port.empty()) {
 				for (int socket : sockets)
 					close(socket);
@@ -403,7 +403,7 @@ void rate(HalonHSLContext* hhc, HalonHSLArguments* args, HalonHSLValue* ret)
 			r = recv(udp_internal, (void*)&reply, sizeof reply, 0);
 			if (r != sizeof reply)
 			{
-				syslog(LOG_ERR, "rate(recv): failed");
+				syslog(LOG_ERR, "rate(recv): %m");
 				return;
 			}
 
@@ -449,7 +449,7 @@ void rate(HalonHSLContext* hhc, HalonHSLArguments* args, HalonHSLValue* ret)
 			r = recv(udp_internal, (void*)&reply, sizeof reply, 0);
 			if (r != sizeof reply)
 			{
-				syslog(LOG_ERR, "rate(recv): failed");
+				syslog(LOG_ERR, "rate(recv): %m");
 				return;
 			}
 
