@@ -44,6 +44,7 @@ If `count` is greater than zero, it will increase the rate and return `true`, or
 **Example**
 
 ```
+import { rate } from "extras://rate";
 if (rate("outbound", $connection["auth"]["username"], 3, 60) == false) {
       Reject("User is only allowed to send 3 messages per minute");
 }

@@ -467,5 +467,6 @@ HALON_EXPORT
 bool Halon_hsl_register(HalonHSLRegisterContext* ptr)
 {
 	HalonMTA_hsl_register_function(ptr, "rate", &rate);
+	HalonMTA_hsl_module_register_function(ptr, "rate", &rate);
 	return true;
 }
