@@ -21,6 +21,8 @@ For the configuration schemas, see [rate.schema.json](rate.schema.json) and [rat
 
 ## Exported functions
 
+These functions needs to be [imported](https://docs.halon.io/hsl/structures.html#import) from the `extras://rate` module path.
+
 ### rate(namespace, entry, count, interval [, options])
 
 Check or account for the rate of `entry` in `namespace` during the last `interval`. On error `none` is returned.
