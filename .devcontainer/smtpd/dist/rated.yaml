@@ -1,0 +1,11 @@
+environment:
+  controlsocket:
+    chmod: '0660'
+    group: staff
+  privdrop:
+    group: nogroup
+    user: nobody
+  socket:
+    address: 127.0.0.1
+    port: 5000
+version: '5.10'

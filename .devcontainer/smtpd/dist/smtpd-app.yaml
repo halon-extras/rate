@@ -1,0 +1,50 @@
+plugins:
+- config:
+    address: 127.0.0.1
+    port: 5000
+  id: rate
+resolver:
+  cache:
+    size: 10000
+scripting:
+  files:
+  - data: |-
+      import { rate } from "extras://rate";
+
+      echo rate("foo", "bar", 3, 60);
+    id: test.hsl
+  hooks:
+    connect:
+    - data: ""
+      id: default
+    eod:
+    - data: |-
+        Accept();
+      id: default
+servers:
+- id: default
+  phases:
+    connect:
+      hook: default
+    eod:
+      hook: default
+  transport: mx
+transportgroups:
+- dsn:
+    transport: mx
+  id: default
+  retry:
+    count: 30
+    intervals:
+    - interval: 60
+    - interval: 900
+    - interval: 3600
+      notify: true
+    - interval: 7200
+    - interval: 10800
+  transports:
+  - id: mx
+    session:
+      tls:
+        mode: dane
+version: '5.10'

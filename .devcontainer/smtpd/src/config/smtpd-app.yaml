@@ -1,0 +1,35 @@
+version: "5.10"
+servers:
+  - id: default
+    phases:
+      connect:
+        hook: default
+      eod:
+        hook: default
+    transport: mx
+transportgroups:
+  - id: default
+    retry:
+      count: 30
+      intervals:
+        - interval: 60
+        - interval: 900
+        - interval: 3600
+          notify: true
+        - interval: 7200
+        - interval: 10800
+    dsn:
+      transport: mx
+    transports:
+      - id: mx
+        session:
+          tls:
+            mode: dane
+resolver:
+  cache:
+    size: 10000
+plugins:
+  - id: rate
+    config:
+      address: "127.0.0.1"
+      port: 5000
