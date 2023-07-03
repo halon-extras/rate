@@ -193,6 +193,7 @@ bool Halon_init(HalonInitContext* hic)
 	if (reresolve)
 	{
 		p = std::thread([]{
+			pthread_setname_np(pthread_self(), "p/rate/resolve");
 			while (true)
 			{
 				std::unique_lock<std::mutex> lk(cv_m);
