@@ -50,6 +50,12 @@
                     "type": "boolean",
                     "default": false,
                     "description": "Enable automatic bad host detection"
+                },
+                "timeout": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "default": 5000,
+                    "description": "The timeout value (in milliseconds)"
                 }
             }
         }

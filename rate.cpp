@@ -80,6 +80,7 @@ std::string path;
 std::string port;
 std::string address;
 bool badhost = false;
+int timeout = 5000;
 
 HALON_EXPORT
 int Halon_version()
@@ -190,6 +191,8 @@ bool Halon_init(HalonInitContext* hic)
 	if (address_) address = address_;
 	const char* badhost_ = HalonMTA_config_string_get(HalonMTA_config_object_get(app, "badhost"), nullptr);
 	if (badhost_) badhost = (strcmp(badhost_, "true") == 0 || strcmp(badhost_, "TRUE") == 0) ? true : false;
+	const char* timeout_ = HalonMTA_config_string_get(HalonMTA_config_object_get(app, "timeout"), nullptr);
+	if (timeout_) timeout = strtoul(timeout_, nullptr, 10);
 
 	if (!port.empty())
 		create_sockets(path, port, address, sockets);
@@ -233,6 +236,7 @@ void Halon_config_reload(HalonConfig* app)
 	std::string port_;
 	std::string address_;
 	bool badhost_ = false;
+	int timeout_ = 5000;
 
 	const char* a = HalonMTA_config_string_get(HalonMTA_config_object_get(app, "path"), nullptr);
 	if (a) path_ = a;
@@ -242,6 +246,8 @@ void Halon_config_reload(HalonConfig* app)
 	if (c) address_ = c;
 	const char* d = HalonMTA_config_string_get(HalonMTA_config_object_get(app, "badhost"), nullptr);
 	if (d) badhost_ = (strcmp(d, "true") == 0 || strcmp(d, "TRUE") == 0) ? true : false;
+	const char* e = HalonMTA_config_string_get(HalonMTA_config_object_get(app, "timeout"), nullptr);
+	if (e) timeout_ = strtoul(e, nullptr, 10);
 
 	std::vector<int> sockets_;
 	if (create_sockets(path_, port_, address_, sockets_))
@@ -254,6 +260,7 @@ void Halon_config_reload(HalonConfig* app)
 		port = port_;
 		address = address_;
 		badhost = badhost_;
+		timeout = timeout_;
 	}
 }
 
@@ -407,7 +414,7 @@ void rate(HalonHSLContext* hhc, HalonHSLArguments* args, HalonHSLValue* ret)
 			pollfd pfd;
 			pfd.fd = udp_internal;
 			pfd.events = POLLIN;
-			if (poll(&pfd, 1, 5000) != 1 || !(pfd.revents & POLLIN))
+			if (poll(&pfd, 1, timeout) != 1 || !(pfd.revents & POLLIN))
 			{
 				syslog(LOG_ERR, "rate(recv): timed out");
 				if (!port.empty() && badhost && reresolve && sockets.size() > 1)
@@ -468,7 +475,7 @@ void rate(HalonHSLContext* hhc, HalonHSLArguments* args, HalonHSLValue* ret)
 			pollfd pfd;
 			pfd.fd = udp_internal;
 			pfd.events = POLLIN;
-			if (poll(&pfd, 1, 5000) != 1 || !(pfd.revents & POLLIN))
+			if (poll(&pfd, 1, timeout) != 1 || !(pfd.revents & POLLIN))
 			{
 				syslog(LOG_ERR, "rate(recv): timed out");
 				if (!port.empty() && badhost && reresolve && sockets.size() > 1)
