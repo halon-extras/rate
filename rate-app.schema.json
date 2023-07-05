@@ -45,6 +45,11 @@
                             "description": "The hostname"
                         }
                     ]
+                },
+                "badhost": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Enable automatic bad host detection"
                 }
             }
         }

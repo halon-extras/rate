@@ -15,6 +15,7 @@
 #include <syslog.h>
 #include <math.h>
 #include <mutex>
+#include <algorithm>
 #if defined(__linux__)
 #include <bsd/bsd.h>
 #endif
@@ -78,6 +79,7 @@ unsigned long reresolve = 0;
 std::string path;
 std::string port;
 std::string address;
+bool badhost = false;
 
 HALON_EXPORT
 int Halon_version()
@@ -186,6 +188,8 @@ bool Halon_init(HalonInitContext* hic)
 	if (port_) port = port_;
 	const char* address_ = HalonMTA_config_string_get(HalonMTA_config_object_get(app, "address"), nullptr);
 	if (address_) address = address_;
+	const char* badhost_ = HalonMTA_config_string_get(HalonMTA_config_object_get(app, "badhost"), nullptr);
+	if (badhost_) badhost = (strcmp(badhost_, "true") == 0 || strcmp(badhost_, "TRUE") == 0) ? true : false;
 
 	if (!port.empty())
 		create_sockets(path, port, address, sockets);
@@ -228,6 +232,7 @@ void Halon_config_reload(HalonConfig* app)
 	std::string path_;
 	std::string port_;
 	std::string address_;
+	bool badhost_ = false;
 
 	const char* a = HalonMTA_config_string_get(HalonMTA_config_object_get(app, "path"), nullptr);
 	if (a) path_ = a;
@@ -235,6 +240,8 @@ void Halon_config_reload(HalonConfig* app)
 	if (b) port_ = b;
 	const char* c = HalonMTA_config_string_get(HalonMTA_config_object_get(app, "address"), nullptr);
 	if (c) address_ = c;
+	const char* d = HalonMTA_config_string_get(HalonMTA_config_object_get(app, "badhost"), nullptr);
+	if (d) badhost_ = (strcmp(d, "true") == 0 || strcmp(d, "TRUE") == 0) ? true : false;
 
 	std::vector<int> sockets_;
 	if (create_sockets(path_, port_, address_, sockets_))
@@ -246,6 +253,7 @@ void Halon_config_reload(HalonConfig* app)
 		path = path_;
 		port = port_;
 		address = address_;
+		badhost = badhost_;
 	}
 }
 
@@ -387,6 +395,11 @@ void rate(HalonHSLContext* hhc, HalonHSLArguments* args, HalonHSLValue* ret)
 					close(socket);
 				sockets.clear();
 			}
+			if (!port.empty() && badhost && reresolve && sockets.size() > 1)
+			{
+				sockets.erase(std::remove(sockets.begin(), sockets.end(), udp_internal), sockets.end());
+				close(udp_internal);
+			}
 			return;
 		}
 
@@ -397,6 +410,11 @@ void rate(HalonHSLContext* hhc, HalonHSLArguments* args, HalonHSLValue* ret)
 			if (poll(&pfd, 1, 5000) != 1 || !(pfd.revents & POLLIN))
 			{
 				syslog(LOG_ERR, "rate(recv): timed out");
+				if (!port.empty() && badhost && reresolve && sockets.size() > 1)
+				{
+					sockets.erase(std::remove(sockets.begin(), sockets.end(), udp_internal), sockets.end());
+					close(udp_internal);
+				}
 				return;
 			}
 
@@ -405,6 +423,11 @@ void rate(HalonHSLContext* hhc, HalonHSLArguments* args, HalonHSLValue* ret)
 			if (r != sizeof reply)
 			{
 				syslog(LOG_ERR, "rate(recv): %m");
+				if (!port.empty() && badhost && reresolve && sockets.size() > 1)
+				{
+					sockets.erase(std::remove(sockets.begin(), sockets.end(), udp_internal), sockets.end());
+					close(udp_internal);
+				}
 				return;
 			}
 
@@ -433,6 +456,11 @@ void rate(HalonHSLContext* hhc, HalonHSLArguments* args, HalonHSLValue* ret)
 					close(socket);
 				sockets.clear();
 			}
+			if (!port.empty() && badhost && reresolve && sockets.size() > 1)
+			{
+				sockets.erase(std::remove(sockets.begin(), sockets.end(), udp_internal), sockets.end());
+				close(udp_internal);
+			}
 			return;
 		}
 
@@ -443,6 +471,11 @@ void rate(HalonHSLContext* hhc, HalonHSLArguments* args, HalonHSLValue* ret)
 			if (poll(&pfd, 1, 5000) != 1 || !(pfd.revents & POLLIN))
 			{
 				syslog(LOG_ERR, "rate(recv): timed out");
+				if (!port.empty() && badhost && reresolve && sockets.size() > 1)
+				{
+					sockets.erase(std::remove(sockets.begin(), sockets.end(), udp_internal), sockets.end());
+					close(udp_internal);
+				}
 				return;
 			}
 
@@ -451,6 +484,11 @@ void rate(HalonHSLContext* hhc, HalonHSLArguments* args, HalonHSLValue* ret)
 			if (r != sizeof reply)
 			{
 				syslog(LOG_ERR, "rate(recv): %m");
+				if (!port.empty() && badhost && reresolve && sockets.size() > 1)
+				{
+					sockets.erase(std::remove(sockets.begin(), sockets.end(), udp_internal), sockets.end());
+					close(udp_internal);
+				}
 				return;
 			}
 
