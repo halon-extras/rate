@@ -41,7 +41,7 @@ The following options are available in the **options** array.
 
 **Returns**
 
-If `count` is greater than zero, it will increase the rate and return `true`, or return `false` if the limit is exceeded. If count is zero (`0`), it will return the number of items during the last `interval`.
+If `count` is greater than zero, it will increase the rate and return `true`, or return `false` if the limit is exceeded. If count is zero (`0`), it will return the number of items during the last `interval`. On error `none` is returned.
 
 **Example**
 
