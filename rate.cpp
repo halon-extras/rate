@@ -70,18 +70,18 @@ struct rate_packet_count_reply
 	uint32_t count;
 } __attribute__((packed));
 
-std::mutex m;
-std::thread p;
-std::condition_variable cv;
-std::mutex cv_m;
-bool stop = false;
-std::vector<int> sockets;
-unsigned long reresolve = 0;
-std::string path;
-std::string port;
-std::string address;
-bool badhost = false;
-int timeout = 5000;
+static std::mutex m;
+static std::thread p;
+static std::condition_variable cv;
+static std::mutex cv_m;
+static bool stop = false;
+static std::vector<int> sockets;
+static unsigned long reresolve = 0;
+static std::string path;
+static std::string port;
+static std::string address;
+static bool badhost = false;
+static int timeout = 5000;
 
 HALON_EXPORT
 int Halon_version()
@@ -89,7 +89,7 @@ int Halon_version()
 	return HALONMTA_PLUGIN_VERSION;
 }
 
-bool create_sockets(std::string path_, std::string port_, std::string address_, std::vector<int> &sockets_)
+static bool create_sockets(std::string path_, std::string port_, std::string address_, std::vector<int> &sockets_)
 {
 	std::vector<std::pair<sockaddr_storage, socklen_t>> addrs;
 
@@ -280,7 +280,7 @@ void Halon_cleanup()
 	}
 }
 
-void rate(HalonHSLContext* hhc, HalonHSLArguments* args, HalonHSLValue* ret)
+static void rate(HalonHSLContext* hhc, HalonHSLArguments* args, HalonHSLValue* ret)
 {
 	HalonHSLValue* a;
 
