@@ -10,10 +10,11 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"Halon.vscode-halon",
-				"Halon.hsl-linter",
-				"Halon.hsl-debug",
-				"ms-vscode.cpptools"
+				"halon.vscode-halon",
+				"halon.hsl-syntax",
+				"halon.hsl-linter",
+				"halon.hsl-debug",
+				"ms-vscode.cpptools-extension-pack"
 			]
 		}
 	}
