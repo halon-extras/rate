@@ -26,7 +26,7 @@ using namespace std::chrono_literals;
 #define RATE_NS_LEN 64
 #define RATE_ENTRY_LEN 512
 
-enum rate_paket_type
+enum rate_packet_type
 {
 	RATE_HIT = 1,
 	RATE_COUNT,
